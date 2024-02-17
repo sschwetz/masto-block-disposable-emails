@@ -1,0 +1,16 @@
+#! /usr/bin/env bash
+
+echo downloading current disposable email domain list
+if [  -d "./disposable-email-domains" ]; then
+  # pull the current version from github
+  /usr/bin/env ls | /usr/bin/env xargs -I{} /usr/bin/env git -C {} pull
+else
+  #clone the github repo  
+  /usr/bin/env git clone https://github.com/disposable-email-domains/disposable-email-domains.github
+fi
+
+echo updating block list, this may take some time..
+/usr/bin/env cat ./disposable-email-domains/disposable_email_blocklist.conf | /usr/bin/env xargs RAILS_ENV=production ./live/bin/tootctl email-domain-blocks add
+
+echo unblocking explicity good domains, this will only take a little time..
+/usr/bin/env cat ./disposable-email-domains/allowlist.conf | xargs RAILS_ENV=production ./live/bin/tootctl tootctl email-domain-blocks remove
