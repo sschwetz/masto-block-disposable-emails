@@ -1,0 +1,1 @@
+# masto-block-disposable-emails
